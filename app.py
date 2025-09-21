@@ -33,7 +33,7 @@ def create():
     except sqlite3.IntegrityError:
         return render_template("username_taken_error.html")
 
-    return "Tunnus luotu"
+    return render_template("user_created.html")
 
 @app.route("/login", methods=["POST"])
 def login():
