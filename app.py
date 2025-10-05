@@ -59,6 +59,10 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
     
+    if not username or len(username) < 4 or len(username) > 16:
+        return render_template("username_or_password_error.html")
+    if not password or len(password) < 4 or len(password) > 16:
+        return render_template("username_or_password_error.html")    
     sql = "SELECT password_hash FROM users WHERE username = ?"
     password_hash = db.query(sql, [username])[0][0]
 
