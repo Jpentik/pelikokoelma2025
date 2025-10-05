@@ -36,8 +36,8 @@ def register():
 @app.route("/create", methods=["POST"])
 def create():
     username = request.form["username"]
-    if not username or len(username) > 16:
-        abort(403)
+    if not username or len(username) < 4 or len(username) > 16:
+        return render_template("username_length_error.html")
     password1 = request.form["password1"]
     password2 = request.form["password2"]
     if password1 != password2:
