@@ -40,6 +40,8 @@ def create():
         return render_template("username_length_error.html")
     password1 = request.form["password1"]
     password2 = request.form["password2"]
+    if not password1 or len(password) < 4 or len(password) > 16:
+        return render_template("password_length_error.html")
     if password1 != password2:
         return render_template("password_match_error.html")
     password_hash = generate_password_hash(password1)
