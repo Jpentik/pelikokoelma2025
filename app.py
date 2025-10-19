@@ -4,6 +4,7 @@ from flask import abort, redirect, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 import db
 import config
+import users
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -54,25 +55,27 @@ def create():
 
     return render_template("user_created.html")
 
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    username = request.form["username"]
-    password = request.form["password"]
+    if request.method == "GET":
+        return render_template("login.html")
+    if request.method== "POST":
+        username = request.form["username"]
+        password = request.form["password"]
     
-    if not username or len(username) < 4 or len(username) > 16:
-        return render_template("username_or_password_error.html")
-    if not password or len(password) < 4 or len(password) > 16:
-        return render_template("username_or_password_error.html")    
-    sql = "SELECT password_hash FROM users WHERE username = ?"
-    password_hash = db.query(sql, [username])[0][0]
+        if not username or len(username) < 4 or len(username) > 16:
+         return render_template("username_or_password_error.html")
+        if not password or len(password) < 4 or len(password) > 16:
+         return render_template("username_or_password_error.html")    
 
-    if check_password_hash(password_hash, password):
-        session["username"] = username
-        return redirect("/")
-    else:
-        return render_template("username_or_password_error.html")
+        user_id = users.check_login(username, password)
+        if user_id:
+            session["user_id"] = user_id
+            return redirect("/")
+        else:
+            return render_template("username_or_password_error.html")
 
 @app.route("/logout")
 def logout():
-    del session["username"]
+    del session["user_id"]
     return redirect("/")
